@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SellerLite.Api/SellerLite.Api.csproj" />
+  <Project Path="SellerLite.Application/SellerLite.Application.csproj" />
+  <Project Path="SellerLite.Domain/SellerLite.Domain.csproj" />
+  <Project Path="SellerLite.Infrastructure/SellerLite.Infrastructure.csproj" />
+</Solution>

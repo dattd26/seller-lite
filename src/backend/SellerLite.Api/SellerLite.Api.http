@@ -1,0 +1,6 @@
+@SellerLite.Api_HostAddress = http://localhost:5139
+
+GET {{SellerLite.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

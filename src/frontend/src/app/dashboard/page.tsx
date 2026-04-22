@@ -81,20 +81,21 @@ export default function DashboardPage() {
         setOrders(ordersData);
 
         // Fetch Products for Low Stock
-        let productsData: Product[];
+        let productsLowStock: Product[];
         try {
-          const res = await fetch(`${API_BASE}/products`);
+          const res = await fetch(`${API_BASE}/products/low-stock`);
           if (res.ok) {
-            productsData = await res.json();
+            productsLowStock = await res.json();
           } else throw new Error();
         } catch {
-          productsData = [
+          console.log("Error fetching low stock products");
+          productsLowStock = [
             { id: "p1", name: "Áo thun nam basic", sku: "AT-001", salePrice: 150000, stock: 2 },
             { id: "p2", name: "Quần jean nữ ống rộng", sku: "QJ-002", salePrice: 250000, stock: 5 },
             { id: "p3", name: "Giày thể thao Sneaker", sku: "GT-003", salePrice: 550000, stock: 1 }
           ];
         }
-        setLowStockProducts(productsData.filter(p => p.stock <= 5));
+        setLowStockProducts(productsLowStock);
 
       } catch (error) {
         console.error("Error fetching dashboard data:", error);

@@ -19,4 +19,10 @@ public class ProductsController : ApiControllerBase
         return CreatedAtAction(nameof(GetProducts), new { id = productId }, productId);
         // Ideally should have a GetProductById endpoint and use it in CreatedAtAction
     }
+
+    [HttpGet("low-stock")]
+    public async Task<ActionResult<List<ProductDto>>> GetLowStockProducts()
+    {
+        return await Mediator.Send(new GetLowStockProductsQuery());
+    }
 }

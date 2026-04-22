@@ -6,12 +6,34 @@ import Topbar from '@/components/layout/Topbar';
 import MetricCard from '@/components/dashboard/MetricCard';
 import RecentOrders from '@/components/dashboard/RecentOrders';
 import InventoryAlerts from '@/components/dashboard/InventoryAlerts';
+import BusinessAnalysis from '@/components/dashboard/BusinessAnalysis';
+import Link from 'next/link';
+
+interface DailyTrend {
+  date: string;
+  revenue: number;
+  profit: number;
+}
+
+interface CategorySale {
+  category: string;
+  revenue: number;
+  count: number;
+}
+
+interface ProductSale {
+  name: string;
+  quantity: number;
+}
 
 interface DashboardSummary {
   totalRevenue: number;
   totalOrders: number;
   lowStockItems: number;
   expectedProfit: number;
+  dailyTrends: DailyTrend[];
+  categoryBreakdown: CategorySale[];
+  topProducts: ProductSale[];
 }
 
 interface Order {
@@ -38,7 +60,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(amount);
   };
 
   useEffect(() => {
@@ -59,7 +81,26 @@ export default function DashboardPage() {
             totalRevenue: 1500000,
             totalOrders: 12,
             lowStockItems: 3,
-            expectedProfit: 300000
+            expectedProfit: 300000,
+            dailyTrends: [
+              { date: '16/04', revenue: 120000, profit: 30000 },
+              { date: '17/04', revenue: 150000, profit: 35000 },
+              { date: '18/04', revenue: 200000, profit: 50000 },
+              { date: '19/04', revenue: 180000, profit: 45000 },
+              { date: '20/04', revenue: 250000, profit: 60000 },
+              { date: '21/04', revenue: 300000, profit: 75000 },
+              { date: '22/04', revenue: 300000, profit: 75000 },
+            ],
+            categoryBreakdown: [
+              { category: 'Thời trang', revenue: 800000, count: 6 },
+              { category: 'Điện tử', revenue: 450000, count: 2 },
+              { category: 'Gia dụng', revenue: 250000, count: 4 },
+            ],
+            topProducts: [
+              { name: 'Áo thun basic', quantity: 15 },
+              { name: 'Quần Jean ống rộng', quantity: 10 },
+              { name: 'Tai nghe Bluetooth', quantity: 8 },
+            ]
           };
         }
         setSummary(summaryData);
@@ -116,7 +157,7 @@ export default function DashboardPage() {
           {/* Header */}
           <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-extrabold text-[#1900a9] tracking-tight">Tổng quan hoạt động</h1>
+              <h1 className="text-3xl font-extrabold text-[#1900a9] tracking-tight font-headline">Tổng quan hoạt động</h1>
               <p className="text-[#464555] font-medium mt-1">Theo dõi tình hình kinh doanh và xu hướng bán hàng của bạn.</p>
             </div>
             <div className="flex gap-3">
@@ -124,10 +165,10 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined text-sm">download</span>
                 Xuất dữ liệu
               </button>
-              <button className="bg-gradient-to-br from-[#1e00a9] to-[#3525cd] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 shadow-lg shadow-[#1e00a9]/20 transition-all flex items-center gap-2">
+              <Link href="/products/create" style={{ cursor: "pointer" }} className="bg-gradient-to-br from-[#1e00a9] to-[#3525cd] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 shadow-lg shadow-[#1e00a9]/20 transition-all flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">add</span>
                 Thêm sản phẩm
-              </button>
+              </Link>
             </div>
           </section>
 
@@ -158,42 +199,16 @@ export default function DashboardPage() {
             />
           </section>
 
-          {/* Charts & Alerts */}
+          {/* Business Analysis & Alerts */}
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] p-8 flex flex-col">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-xl font-extrabold text-[#191c1e]">Phân tích lợi nhuận</h2>
-                  <p className="text-[#464555] text-sm">Phân bổ Doanh thu và Lợi nhuận</p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#1e00a9]"></span>
-                    <span className="text-xs font-bold text-[#464555]">Doanh thu</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#00696e]"></span>
-                    <span className="text-xs font-bold text-[#464555]">Lợi nhuận</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 min-h-[300px] relative mt-4">
-                <div className="absolute inset-0 bg-gray-50 rounded-xl overflow-hidden">
-                  <img 
-                    alt="Biểu đồ phân tích" 
-                    className="w-full h-full object-cover mix-blend-multiply opacity-80" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLL7FquP9shTglYrnI_yJOVdhsAVYVA9d85oZfKpNDSfpZA9Tos40ydvH69afF6TgAJ8GX1svktrlkgw5ccsFuf92FvEwi6vs5fsNVG84VyD3i0jRpOLlKNmNHWNJrW5XmNubZJMRG7tz6A75sP9JJDY-2Eddm4DCcp3nxQHD71M46ymetfS9GdFeieePlRGWgyBUca1bdmN9aV_yaYy4Iljhg_NspZF_zLw5zYPh8-Xmk69iALO2D73N6OcD90rgp3dWw39Y6A3w" 
-                  />
-                </div>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-between px-6 text-[10px] font-bold text-[#464555]/40">
-                  <span>01 THG 8</span><span>07 THG 8</span><span>14 THG 8</span><span>21 THG 8</span><span>30 THG 8</span>
-                </div>
-              </div>
-            </div>
+            <BusinessAnalysis 
+              dailyTrends={summary?.dailyTrends || []} 
+              categoryBreakdown={summary?.categoryBreakdown || []} 
+            />
             <InventoryAlerts products={lowStockProducts} loading={loading} />
           </section>
 
-          {/* Orders Table */}
+          {/* Recent Orders Table */}
           <RecentOrders orders={orders} loading={loading} />
         </div>
       </main>

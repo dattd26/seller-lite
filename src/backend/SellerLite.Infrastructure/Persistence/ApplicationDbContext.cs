@@ -36,11 +36,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Order>()
             .Property(o => o.ShippingFee)
             .HasPrecision(18, 2);
-
         modelBuilder.Entity<OrderItem>()
             .Property(oi => oi.UnitPrice)
             .HasPrecision(18, 2);
-
-        SeedData.Seed(modelBuilder);
     }
 }

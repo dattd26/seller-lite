@@ -1,4 +1,4 @@
-using MediatR;
+using Scalar.AspNetCore;
 using SellerLite.Application;
 using SellerLite.Application.Products.Commands.CreateProduct;
 using SellerLite.Application.Products.Queries.GetProducts;
@@ -17,6 +17,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

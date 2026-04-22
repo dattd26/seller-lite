@@ -13,6 +13,7 @@ public class Product : BaseAuditableEntity
 {
     public string Name { get; set; } = string.Empty;
     public string SKU { get; set; } = string.Empty;
+    public string Category { get; set; } = "Chưa phân loại";
     public decimal CostPrice { get; set; }
     public decimal SalePrice { get; set; }
     public int Stock { get; set; }
@@ -23,6 +24,7 @@ public class Order : BaseAuditableEntity
 {
     public string OrderNumber { get; set; } = string.Empty;
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.COD;
     public decimal TotalPrice { get; set; }
     public decimal ShippingFee { get; set; }
     public string? CustomerName { get; set; }
@@ -45,4 +47,12 @@ public enum OrderStatus
     Shipping,
     Completed,
     Cancelled
+}
+
+public enum PaymentMethod
+{
+    COD,
+    BankTransfer,
+    EWallet,
+    CreditCard
 }

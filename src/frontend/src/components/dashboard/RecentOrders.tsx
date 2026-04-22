@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import React from 'react';
 
 interface Order {
@@ -99,7 +100,59 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({ orders, loading }) => {
                 <td className="px-8 py-5">{renderStatus(order.status)}</td>
                 <td className="px-8 py-5 text-sm font-bold">{formatCurrency(order.totalPrice)}</td>
                 <td className="px-8 py-5 text-right">
-                  <button className="material-symbols-outlined text-[#464555] hover:text-[#1e00a9] transition-colors">more_vert</button>
+                  <div className="flex justify-end gap-2">
+                    {/* View Details - Always visible as secondary action */}
+                    <button 
+                      title="Xem chi tiết"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-[#464555] hover:bg-gray-100 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-lg">visibility</span>
+                    </button>
+
+                    {/* Contextual Primary Actions */}
+                    {order.status === 'Pending' && (
+                      <>
+                        <button 
+                          title="Xác nhận đơn hàng"
+                          className="w-8 h-8 rounded-full bg-[#1e00a9]/10 text-[#1e00a9] flex items-center justify-center hover:bg-[#1e00a9] hover:text-white transition-all"
+                        >
+                          <span className="material-symbols-outlined text-lg">check</span>
+                        </button>
+                        <button 
+                          title="Hủy đơn hàng"
+                          className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all"
+                        >
+                          <span className="material-symbols-outlined text-lg">close</span>
+                        </button>
+                      </>
+                    )}
+
+                    {order.status === 'Confirmed' && (
+                      <>
+                        <button 
+                          title="Bắt đầu giao hàng"
+                          className="w-8 h-8 rounded-full bg-[#00696e]/10 text-[#00696e] flex items-center justify-center hover:bg-[#00696e] hover:text-white transition-all"
+                        >
+                          <span className="material-symbols-outlined text-lg">local_shipping</span>
+                        </button>
+                        <button 
+                          title="Hủy đơn hàng"
+                          className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all"
+                        >
+                          <span className="material-symbols-outlined text-lg">close</span>
+                        </button>
+                      </>
+                    )}
+
+                    {order.status === 'Shipping' && (
+                      <button 
+                        title="Đã giao hàng thành công"
+                        className="w-8 h-8 rounded-full bg-[#191c1e]/10 text-[#191c1e] flex items-center justify-center hover:bg-[#191c1e] hover:text-white transition-all"
+                      >
+                        <span className="material-symbols-outlined text-lg">task_alt</span>
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -107,7 +160,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({ orders, loading }) => {
         </table>
       </div>
       <div className="p-6 border-t border-gray-50 text-center">
-        <button className="text-sm font-bold text-[#1e00a9] hover:underline">Xem tất cả giao dịch</button>
+        <Link href="/orders" className="text-sm font-bold text-[#1e00a9] hover:underline">Xem tất cả giao dịch</Link>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SellerLite.Application.Orders.Commands.UpdateOrderStatus;
 using SellerLite.Application.Orders.Queries.GetOrders;
-using SellerLite.Domain.Entities;
+using SellerLite.Domain.Entities.Enums;
 using SellerLite.Application.Orders.Commands.CreateOrder;
 
 namespace SellerLite.Api.Controllers;

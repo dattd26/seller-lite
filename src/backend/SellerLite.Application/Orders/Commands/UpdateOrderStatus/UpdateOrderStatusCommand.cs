@@ -1,11 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SellerLite.Application.Common.Interfaces;
-using SellerLite.Domain.Entities;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using SellerLite.Domain.Entities.Enums;
 
 namespace SellerLite.Application.Orders.Commands.UpdateOrderStatus;
 
@@ -69,7 +65,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             }
         }
 
-        order.Status = newStatus;
+        order.UpdateStatus(newStatus);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

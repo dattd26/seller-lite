@@ -1,11 +1,7 @@
 using MediatR;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using SellerLite.Domain.Entities.Enums;
 
 namespace SellerLite.Application.Orders.Commands.CreateOrder;
 
@@ -37,18 +33,21 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
 
         var totalPrice = orderItems.Sum(i => i.Quantity * i.UnitPrice) + request.ShippingFee;
 
+        var phoneNumber = new Domain.Entities.ValueObjects.PhoneNumber();
+        phoneNumber.SetValue(request.CustomerPhone);
+
         // Note: For a real app, verify product exists and check stock.
         var entity = new Order
         {
             OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMddHHmmss}-{new Random().Next(1000, 9999)}",
             CustomerName = request.CustomerName,
-            CustomerPhone = request.CustomerPhone,
+            CustomerPhone = phoneNumber,
             ShippingFee = request.ShippingFee,
             TotalPrice = totalPrice,
-            Status = OrderStatus.Pending,
             Items = orderItems,
             TenantId = Guid.Empty
         };
+        entity.UpdateStatus(OrderStatus.Pending);
 
         _context.Orders.Add(entity);
         await _context.SaveChangesAsync(cancellationToken);

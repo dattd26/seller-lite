@@ -39,5 +39,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<OrderItem>()
             .Property(oi => oi.UnitPrice)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Order>().OwnsOne(o => o.CustomerPhone, cp =>
+        {
+            cp.Property(p => p.Value).HasColumnName("CustomerPhone");
+        });
     }
 }

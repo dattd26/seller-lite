@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'Shipping' | 'Completed' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Confirmed' | 'Shipping' | 'Completed' | 'Cancelled' | 'Returning' | 'Returned';
 
 interface StatusConfig {
   label: string;
@@ -17,6 +17,8 @@ const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
   Shipping:  { label: 'Đang giao',  bg: 'bg-[#e2dfff]',  text: 'text-[#1e00a9]',  dot: 'bg-[#1e00a9]',  ring: 'ring-[#c3c0ff]', animate: true },
   Completed: { label: 'Hoàn thành', bg: 'bg-emerald-50',  text: 'text-emerald-700', dot: 'bg-emerald-500', ring: 'ring-emerald-200' },
   Cancelled: { label: 'Đã hủy',    bg: 'bg-red-50',     text: 'text-red-600',     dot: 'bg-red-500',     ring: 'ring-red-200' },
+  Returning: { label: 'Trả hàng',   bg: 'bg-orange-50',  text: 'text-orange-600',  dot: 'bg-orange-500',  ring: 'ring-orange-200' },
+  Returned:  { label: 'Đã trả hàng',bg: 'bg-teal-50',    text: 'text-teal-600',    dot: 'bg-teal-500',    ring: 'ring-teal-200' },
 };
 
 const OrderStatusBadge: React.FC<{ status: string }> = ({ status }) => {

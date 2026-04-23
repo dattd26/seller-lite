@@ -23,17 +23,21 @@ interface ActionMenuProps {
 const ALLOWED_TRANSITIONS: Record<string, OrderStatus[]> = {
   Pending:   ['Confirmed', 'Cancelled'],
   Confirmed: ['Shipping', 'Cancelled'],
-  Shipping:  ['Completed'],
-  Completed: [],
+  Shipping:  ['Completed', 'Returning'],
+  Completed: ['Returning'],
   Cancelled: [],
+  Returning: ['Returned'],
+  Returned:  [],
 };
 
 const STATUS_ACTION_LABELS: Record<OrderStatus, string> = {
-  Confirmed: 'Xác nhận đơn',
-  Shipping:  'Bắt đầu giao hàng',
-  Completed: 'Đánh dấu hoàn thành',
-  Cancelled: 'Hủy đơn',
-  Pending:   'Chuyển về chờ xử lý',
+  Pending:   'Chờ xử lý',
+  Confirmed: 'Đã xác nhận',
+  Shipping:  'Đang giao',
+  Completed: 'Hoàn thành',
+  Cancelled: 'Đã hủy',
+  Returning: 'Đang trả hàng',
+  Returned:  'Đã trả hàng',
 };
 
 const STATUS_ACTION_ICONS: Record<OrderStatus, string> = {
@@ -42,6 +46,8 @@ const STATUS_ACTION_ICONS: Record<OrderStatus, string> = {
   Completed: 'task_alt',
   Cancelled: 'cancel',
   Pending:   'undo',
+  Returning: 'refresh',
+  Returned:  'check',
 };
 
 const OrderActionMenu: React.FC<ActionMenuProps> = ({ order, onUpdateStatus, onView }) => {

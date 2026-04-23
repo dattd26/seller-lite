@@ -100,7 +100,7 @@ export default function OrdersPage() {
 
   const handleUpdateStatus = async (id: string, status: OrderStatus) => {
     try {
-      const statusMap: Record<OrderStatus, number> = { Pending: 0, Confirmed: 1, Shipping: 2, Completed: 3, Cancelled: 4 };
+      const statusMap: Record<OrderStatus, number> = { Pending: 0, Confirmed: 1, Shipping: 2, Completed: 3, Cancelled: 4, Returning: 5, Returned: 6 };
       const res = await fetch(`${API_BASE}/orders/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

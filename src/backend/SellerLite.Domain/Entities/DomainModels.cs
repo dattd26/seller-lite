@@ -46,7 +46,9 @@ public enum OrderStatus
     Confirmed,
     Shipping,
     Completed,
-    Cancelled
+    Cancelled,
+    Returning,
+    Returned
 }
 
 public enum PaymentMethod

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,16 +22,54 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 
     public async Task Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
     {
-        var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
+        var order = await _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
         
         if (order == null)
             throw new Exception("Order not found");
 
-        order.Status = request.Status;
+        var oldStatus = order.Status;
+        var newStatus = request.Status;
 
-        // If order is completed, we should probably deduct stock here or via events.
-        // For simplicity, we just save the status.
+        if (oldStatus == newStatus) return;
 
+        bool wasStockDeducted = oldStatus == OrderStatus.Confirmed || 
+                                oldStatus == OrderStatus.Shipping || 
+                                oldStatus == OrderStatus.Completed;
+
+        bool shouldStockBeDeducted = newStatus == OrderStatus.Confirmed || 
+                                     newStatus == OrderStatus.Shipping || 
+                                     newStatus == OrderStatus.Completed;
+
+        if (!wasStockDeducted && shouldStockBeDeducted)
+        {
+            var productIds = order.Items.Select(i => i.ProductId).ToList();
+            var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync(cancellationToken);
+            foreach(var item in order.Items)
+            {
+                var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (product != null)
+                {
+                    product.Stock -= item.Quantity;
+                }
+            }
+        }
+        else if (wasStockDeducted && !shouldStockBeDeducted && newStatus != OrderStatus.Returning)
+        {
+            var productIds = order.Items.Select(i => i.ProductId).ToList();
+            var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync(cancellationToken);
+            foreach(var item in order.Items)
+            {
+                var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (product != null)
+                {
+                    product.Stock += item.Quantity;
+                }
+            }
+        }
+
+        order.Status = newStatus;
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

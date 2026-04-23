@@ -18,11 +18,14 @@ const MOCK_PRODUCTS: Product[] = [
   { id: 'p6', name: 'Giày Thể Thao', sku: 'FASH-060', category: 'Thời trang Nam', salePrice: 550000, costPrice: 300000, stock: 8, lowStockThreshold: 10 },
 ];
 
+import CreateProductModal from '@/components/inventory/CreateProductModal';
+
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastSynced, setLastSynced] = useState<Date | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -50,8 +53,7 @@ export default function InventoryPage() {
   };
 
   const handleAddProduct = () => {
-    // Navigate to add product page (to be implemented)
-    alert('Chức năng thêm sản phẩm đang được phát triển.');
+    setIsModalOpen(true);
   };
 
   // Compute summary data from products
@@ -108,6 +110,13 @@ export default function InventoryPage() {
           <ProductTable products={products} loading={loading} onAddProduct={handleAddProduct} />
         </div>
       </main>
+
+      {/* Modals */}
+      <CreateProductModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={fetchProducts}
+      />
     </div>
   );
 }

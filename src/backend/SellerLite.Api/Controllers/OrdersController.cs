@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SellerLite.Application.Orders.Commands.UpdateOrderStatus;
 using SellerLite.Application.Orders.Queries.GetOrders;
+using SellerLite.Domain.Entities.Enums;
+using SellerLite.Application.Orders.Commands.CreateOrder;
 
 namespace SellerLite.Api.Controllers;
 
@@ -20,11 +22,11 @@ public class OrdersController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateOrder([FromBody] SellerLite.Application.Orders.Commands.CreateOrder.CreateOrderCommand command)
+    public async Task<ActionResult<Guid>> CreateOrder([FromBody] CreateOrderCommand command)
     {
         var orderId = await Mediator.Send(command);
         return CreatedAtAction(nameof(GetOrders), new { id = orderId }, orderId);
     }
 }
 
-public record UpdateOrderStatusRequest(SellerLite.Domain.Entities.OrderStatus Status);
+public record UpdateOrderStatusRequest(OrderStatus Status);

@@ -1,9 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SellerLite.Application.Common.Interfaces;
-using SellerLite.Domain.Entities;
-using System.Threading;
-using System.Threading.Tasks;
+using SellerLite.Domain.Entities.Enums;
 
 namespace SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
 

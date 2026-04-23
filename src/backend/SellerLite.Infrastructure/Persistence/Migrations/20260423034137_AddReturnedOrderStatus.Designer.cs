@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SellerLite.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SellerLite.Infrastructure.Persistence;
 namespace SellerLite.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260423034137_AddReturnedOrderStatus")]
+    partial class AddReturnedOrderStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,9 @@ namespace SellerLite.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerPhone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrderNumber")
@@ -166,29 +172,6 @@ namespace SellerLite.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Tenants");
-                });
-
-            modelBuilder.Entity("SellerLite.Domain.Entities.Order", b =>
-                {
-                    b.OwnsOne("SellerLite.Domain.Entities.ValueObjects.PhoneNumber", "CustomerPhone", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("CustomerPhone");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
-                    b.Navigation("CustomerPhone");
                 });
 
             modelBuilder.Entity("SellerLite.Domain.Entities.OrderItem", b =>

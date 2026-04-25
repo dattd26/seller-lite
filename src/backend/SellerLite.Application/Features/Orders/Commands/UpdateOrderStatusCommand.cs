@@ -2,10 +2,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities.Enums;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SellerLite.Application.Features.Orders.Commands;
 

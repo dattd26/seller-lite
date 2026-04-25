@@ -9,6 +9,13 @@ import InventoryAlerts from '@/components/dashboard/InventoryAlerts';
 import BusinessAnalysis from '@/components/dashboard/BusinessAnalysis';
 import Link from 'next/link';
 
+import { dashboardService, DashboardSummary } from '@/services/dashboard.service';
+import { orderService } from '@/services/order.service';
+import { productService } from '@/services/product.service';
+import { Order } from '@/types/order';
+import { Product } from '@/types/product';
+
+// Giữ các interface đặc thù cho Dashboard Analysis nếu chưa có trong service
 interface DailyTrend {
   date: string;
   revenue: number;
@@ -26,35 +33,16 @@ interface ProductSale {
   quantity: number;
 }
 
-interface DashboardSummary {
-  totalRevenue: number;
-  totalOrders: number;
-  lowStockItems: number;
+// Mở rộng DashboardSummary từ service với các field cho UI analysis
+interface DashboardAnalysis extends DashboardSummary {
   expectedProfit: number;
   dailyTrends: DailyTrend[];
   categoryBreakdown: CategorySale[];
   topProducts: ProductSale[];
 }
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  customerName: string;
-  createdAt: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  salePrice: number;
-  stock: number;
-}
-
 export default function DashboardPage() {
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [summary, setSummary] = useState<DashboardAnalysis | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,76 +55,37 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const API_BASE = 'http://localhost:5139/api';
 
         // Fetch Summary
-        let summaryData: DashboardSummary;
         try {
-          const res = await fetch(`${API_BASE}/dashboard/summary`);
-          if (res.ok) {
-            summaryData = await res.json();
-          } else throw new Error();
-        } catch {
-          summaryData = {
-            totalRevenue: 1500000,
-            totalOrders: 12,
-            lowStockItems: 3,
-            expectedProfit: 300000,
-            dailyTrends: [
-              { date: '16/04', revenue: 120000, profit: 30000 },
-              { date: '17/04', revenue: 150000, profit: 35000 },
-              { date: '18/04', revenue: 200000, profit: 50000 },
-              { date: '19/04', revenue: 180000, profit: 45000 },
-              { date: '20/04', revenue: 250000, profit: 60000 },
-              { date: '21/04', revenue: 300000, profit: 75000 },
-              { date: '22/04', revenue: 300000, profit: 75000 },
-            ],
-            categoryBreakdown: [
-              { category: 'Thời trang', revenue: 800000, count: 6 },
-              { category: 'Điện tử', revenue: 450000, count: 2 },
-              { category: 'Gia dụng', revenue: 250000, count: 4 },
-            ],
-            topProducts: [
-              { name: 'Áo thun basic', quantity: 15 },
-              { name: 'Quần Jean ống rộng', quantity: 10 },
-              { name: 'Tai nghe Bluetooth', quantity: 8 },
-            ]
-          };
+          const data = await dashboardService.getSummary();
+          setSummary({
+            ...data,
+            lowStockItems: data.lowStockItems,
+            expectedProfit: data.totalRevenue * 0.2, 
+            dailyTrends: [],
+            categoryBreakdown: [],
+            topProducts: []
+          });
+        } catch (error) {
+          console.error('Failed to fetch dashboard summary:', error);
         }
-        setSummary(summaryData);
 
         // Fetch Orders
-        let ordersData: Order[];
         try {
-          const res = await fetch(`${API_BASE}/orders`);
-          if (res.ok) {
-            ordersData = await res.json();
-          } else throw new Error();
-        } catch {
-          ordersData = [
-            { id: "1", orderNumber: "ORD-2024-001", status: "Pending", totalPrice: 250000, customerName: "Trần Thị B", createdAt: "" },
-            { id: "2", orderNumber: "ORD-2024-002", status: "Shipping", totalPrice: 1250000, customerName: "Lê Văn C", createdAt: "" },
-            { id: "3", orderNumber: "ORD-2024-003", status: "Confirmed", totalPrice: 85000, customerName: "Phạm Thị D", createdAt: "" }
-          ];
+          const data = await orderService.getOrders();
+          setOrders(data.slice(0, 5));
+        } catch (error) {
+          console.error('Failed to fetch orders for dashboard:', error);
         }
-        setOrders(ordersData);
 
         // Fetch Products for Low Stock
-        let productsLowStock: Product[];
         try {
-          const res = await fetch(`${API_BASE}/products/low-stock`);
-          if (res.ok) {
-            productsLowStock = await res.json();
-          } else throw new Error();
-        } catch {
-          console.log("Error fetching low stock products");
-          productsLowStock = [
-            { id: "p1", name: "Áo thun nam basic", sku: "AT-001", salePrice: 150000, stock: 2 },
-            { id: "p2", name: "Quần jean nữ ống rộng", sku: "QJ-002", salePrice: 250000, stock: 5 },
-            { id: "p3", name: "Giày thể thao Sneaker", sku: "GT-003", salePrice: 550000, stock: 1 }
-          ];
+          const data = await productService.getLowStockProducts();
+          setLowStockProducts(data);
+        } catch (error) {
+          console.error('Failed to fetch low stock products:', error);
         }
-        setLowStockProducts(productsLowStock);
 
       } catch (error) {
         console.error("Error fetching dashboard data:", error);

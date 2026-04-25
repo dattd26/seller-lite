@@ -8,41 +8,27 @@ import OrderActionMenu from '@/components/orders/OrderActionMenu';
 import CreateOrderModal from '@/components/orders/CreateOrderModal';
 import OrderDetailModal from '@/components/orders/OrderDetailModal';
 
-const API_BASE = 'http://localhost:5139/api';
+import { orderService } from '@/services/order.service';
+import { productService } from '@/services/product.service';
+import { Order } from '@/types/order';
+import { Product } from '@/types/product';
+
 const PAGE_SIZE = 8;
 
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  customerName: string;
-  customerPhone?: string;
-  createdAt: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  salePrice: number;
-  stock: number;
-}
-
 const MOCK_ORDERS: Order[] = [
-  { id: '1', orderNumber: 'ORD-2024-001', status: 'Pending',   totalPrice: 250000,  customerName: 'Trần Thị Bích',    createdAt: new Date().toISOString() },
-  { id: '2', orderNumber: 'ORD-2024-002', status: 'Shipping',  totalPrice: 1250000, customerName: 'Lê Văn Cường',     createdAt: new Date(Date.now() - 3600000).toISOString() },
-  { id: '3', orderNumber: 'ORD-2024-003', status: 'Completed', totalPrice: 850000,  customerName: 'Phạm Thị Diệu',    createdAt: new Date(Date.now() - 7200000).toISOString() },
-  { id: '4', orderNumber: 'ORD-2024-004', status: 'Cancelled', totalPrice: 125000,  customerName: 'Nguyễn Hoàng Anh', createdAt: new Date(Date.now() - 86400000).toISOString() },
-  { id: '5', orderNumber: 'ORD-2024-005', status: 'Confirmed', totalPrice: 3200000, customerName: 'Võ Thị Hoa',       createdAt: new Date(Date.now() - 172800000).toISOString() },
-  { id: '6', orderNumber: 'ORD-2024-006', status: 'Shipping',  totalPrice: 780000,  customerName: 'Đặng Minh Tuấn',   createdAt: new Date(Date.now() - 259200000).toISOString() },
+  { id: '1', shippingFee: 30000, orderNumber: 'ORD-2024-001', status: 'Pending',   totalPrice: 250000,  customerName: 'Trần Thị Bích',    createdAt: new Date().toISOString() },
+  { id: '2', shippingFee: 30000, orderNumber: 'ORD-2024-002', status: 'Shipping',  totalPrice: 1250000, customerName: 'Lê Văn Cường',     createdAt: new Date(Date.now() - 3600000).toISOString() },
+  { id: '3', shippingFee: 30000, orderNumber: 'ORD-2024-003', status: 'Completed', totalPrice: 850000,  customerName: 'Phạm Thị Diệu',    createdAt: new Date(Date.now() - 7200000).toISOString() },
+  { id: '4', shippingFee: 30000, orderNumber: 'ORD-2024-004', status: 'Cancelled', totalPrice: 125000,  customerName: 'Nguyễn Hoàng Anh', createdAt: new Date(Date.now() - 86400000).toISOString() },
+  { id: '5', shippingFee: 30000, orderNumber: 'ORD-2024-005', status: 'Confirmed', totalPrice: 3200000, customerName: 'Võ Thị Hoa',       createdAt: new Date(Date.now() - 172800000).toISOString() },
+  { id: '6', shippingFee: 30000, orderNumber: 'ORD-2024-006', status: 'Shipping',  totalPrice: 780000,  customerName: 'Đặng Minh Tuấn',   createdAt: new Date(Date.now() - 259200000).toISOString() },
 ];
 
 const MOCK_PRODUCTS: Product[] = [
-  { id: 'p1', name: 'Áo thun Polo Nam', sku: 'FASH-001', salePrice: 125000, stock: 51 },
-  { id: 'p2', name: 'Quần Jean Nữ', sku: 'FASH-050', salePrice: 250000, stock: 10 },
-  { id: 'p3', name: 'Cáp sạc USB-C', sku: 'TECH-001', salePrice: 88000, stock: 101 },
-  { id: 'p4', name: 'Giày Thể Thao', sku: 'FASH-060', salePrice: 550000, stock: 8 },
+  { id: 'p1', category: "Thời trang", name: 'Áo thun Polo Nam', sku: 'FASH-001', salePrice: 125000, stock: 51 },
+  { id: 'p2', category: "Thời trang", name: 'Quần Jean Nữ', sku: 'FASH-050', salePrice: 250000, stock: 10 },
+  { id: 'p3', category: "Thiết bị điện tử", name: 'Cáp sạc USB-C', sku: 'TECH-001', salePrice: 88000, stock: 101 },
+  { id: 'p4', category: "Thời trang", name: 'Giày Thể Thao', sku: 'FASH-060', salePrice: 550000, stock: 8 },
 ];
 
 type TabFilter = 'all' | OrderStatus;
@@ -86,10 +72,10 @@ export default function OrdersPage() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/orders`);
-      if (!res.ok) throw new Error();
-      setOrders(await res.json());
-    } catch {
+      const data = await orderService.getOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
       setOrders(MOCK_ORDERS);
     } finally {
       setLoading(false);
@@ -98,22 +84,25 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders();
-    fetch(`${API_BASE}/products`).then(r => r.json()).then(setProducts).catch(() => setProducts(MOCK_PRODUCTS));
+    productService.getProducts()
+      .then(setProducts)
+      .catch((error) => {
+        console.error('Failed to fetch products for orders:', error);
+        setProducts(MOCK_PRODUCTS);
+      });
   }, [fetchOrders]);
 
   const handleUpdateStatus = async (id: string, status: OrderStatus) => {
     try {
-      const statusMap: Record<OrderStatus, number> = { Pending: 0, Confirmed: 1, Shipping: 2, Completed: 3, Cancelled: 4, Returning: 5, Returned: 6 };
-      const res = await fetch(`${API_BASE}/orders/${id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: statusMap[status] }),
-      });
-      if (!res.ok) throw new Error();
-    } catch {
-      // Optimistic update for demo
+      const statusMap: Record<OrderStatus, number> = { 
+        Pending: 0, Confirmed: 1, Shipping: 2, Completed: 3, 
+        Cancelled: 4, Returning: 5, Returned: 6 
+      };
+      await orderService.updateStatus(id, statusMap[status]);
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+    } catch (error) {
+      console.error('Failed to update order status:', error);
     }
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
   };
 
   const handleView = (order: Order) => {

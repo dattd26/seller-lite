@@ -2,16 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import OrderStatusBadge, { OrderStatus } from '@/components/orders/OrderStatusBadge';
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  customerName: string;
-  customerPhone?: string;
-  createdAt: string;
-}
+import { Order } from '@/types/order';
 
 interface ActionMenuProps {
   order: Order;

@@ -6,6 +6,7 @@ import Topbar from '@/components/layout/Topbar';
 import OrderStatusBadge, { OrderStatus } from '@/components/orders/OrderStatusBadge';
 import OrderActionMenu from '@/components/orders/OrderActionMenu';
 import CreateOrderModal from '@/components/orders/CreateOrderModal';
+import OrderDetailModal from '@/components/orders/OrderDetailModal';
 
 const API_BASE = 'http://localhost:5139/api';
 const PAGE_SIZE = 8;
@@ -79,6 +80,8 @@ export default function OrdersPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -114,7 +117,8 @@ export default function OrdersPage() {
   };
 
   const handleView = (order: Order) => {
-    alert(`Chi tiết đơn hàng ${order.orderNumber}\nKhách: ${order.customerName}\nGiá trị: ${formatCurrency(order.totalPrice)}`);
+    setSelectedOrderId(order.id);
+    setShowDetailModal(true);
   };
 
   // Summary stats
@@ -376,6 +380,13 @@ export default function OrdersPage() {
         onClose={() => setShowModal(false)}
         onSuccess={fetchOrders}
         products={products}
+      />
+
+      {/* Order Detail Modal */}
+      <OrderDetailModal
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        orderId={selectedOrderId}
       />
     </div>
   );

@@ -3,33 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import OrderStatusBadge from './OrderStatusBadge';
 
-interface OrderItem {
-  productName: string;
-  sku: string;
-  quantity: number;
-  unitPrice: number;
-}
-
-interface OrderDetail {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  customerName: string;
-  customerPhone?: string;
-  shippingAddress?: string;
-  shippingFee: number;
-  createdAt: string;
-  items: OrderItem[];
-}
+import { orderService } from '@/services/order.service';
+import { OrderDetail } from '@/types/order';
 
 interface Props {
   orderId: string | null;
   isOpen: boolean;
   onClose: () => void;
 }
-
-const API_BASE = 'http://localhost:5139/api';
 
 const formatCurrency = (v: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(v);
@@ -54,28 +35,10 @@ const OrderDetailModal: React.FC<Props> = ({ orderId, isOpen, onClose }) => {
         setLoading(true);
         setError(null);
         try {
-          const res = await fetch(`${API_BASE}/orders/${orderId}`);
-          if (!res.ok) throw new Error('Không thể tải chi tiết đơn hàng.');
-          const data = await res.json();
+          const data = await orderService.getOrderById(orderId);
           setOrder(data);
         } catch (err: any) {
-          setError(err.message);
-          // Mock data for demo if API fails
-          setOrder({
-            id: orderId,
-            orderNumber: 'ORD-MOCK-123',
-            status: 'Shipping',
-            totalPrice: 1550000,
-            customerName: 'Nguyễn Văn Test',
-            customerPhone: '0901234567',
-            shippingAddress: '123 Đường ABC, Quận 1, TP. HCM',
-            shippingFee: 30000,
-            createdAt: new Date().toISOString(),
-            items: [
-              { productName: 'Áo thun Polo Nam', sku: 'FASH-001', quantity: 2, unitPrice: 150000 },
-              { productName: 'Giày Thể Thao Sneaker', sku: 'GT-003', quantity: 1, unitPrice: 1220000 },
-            ]
-          });
+          setError(err.message || 'Không thể tải chi tiết đơn hàng.');
         } finally {
           setLoading(false);
         }

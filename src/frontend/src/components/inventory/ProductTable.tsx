@@ -3,16 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import InventoryStatusBadge, { getStockStatus } from './InventoryStatusBadge';
 
-export interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  costPrice?: number;
-  salePrice: number;
-  stock: number;
-  category?: string;
-  lowStockThreshold?: number;
-}
+import { Product } from '@/types/product';
 
 type SortField = 'name' | 'salePrice' | 'stock' | 'category';
 type SortDir = 'asc' | 'desc';

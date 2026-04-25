@@ -28,6 +28,7 @@ public class OrderQueryService : IOrderQueryService
             order.OrderNumber,
             order.Status.ToString(),
             order.TotalPrice,
+            order.ShippingFee ?? 0,
             order.CustomerName ?? "",
             order.CreatedAt,
             items

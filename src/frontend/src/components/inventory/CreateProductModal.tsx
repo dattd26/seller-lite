@@ -8,7 +8,7 @@ interface Props {
   onSuccess: () => void;
 }
 
-const API_BASE = 'http://localhost:5139/api';
+import { productService } from '@/services/product.service';
 
 const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -31,16 +31,7 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => 
     setError(null);
 
     try {
-      const res = await fetch(`${API_BASE}/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        throw new Error('Không thể thêm sản phẩm. Vui lòng kiểm tra lại dữ liệu.');
-      }
-
+      await productService.createProduct(formData);
       onSuccess();
       onClose();
       // Reset form
@@ -54,7 +45,7 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => 
         lowStockThreshold: 10,
       });
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Không thể thêm sản phẩm. Vui lòng kiểm tra lại dữ liệu.');
     } finally {
       setLoading(false);
     }

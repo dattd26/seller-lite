@@ -2,23 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
-export interface Order {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalPrice: number;
-  customerName: string;
-  customerPhone?: string;
-  createdAt: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  salePrice: number;
-  stock: number;
-}
+import { orderService } from '@/services/order.service';
+import { Product } from '@/types/product';
 
 interface OrderItem {
   productId: string;
@@ -34,7 +19,7 @@ interface Props {
   products: Product[];
 }
 
-const API_BASE = 'http://localhost:5139/api';
+// hard tam
 const SHIPPING_FEE = 30000;
 
 const formatCurrency = (v: number) =>
@@ -106,18 +91,15 @@ const CreateOrderModal: React.FC<Props> = ({ isOpen, onClose, onSuccess, product
     if (items.some(it => !it.productId)) { setError('Vui lòng chọn sản phẩm cho tất cả dòng.'); return; }
     setLoading(true); setError(null);
     try {
-      const res = await fetch(`${API_BASE}/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName, customerPhone, shippingFee: SHIPPING_FEE,
-          items: items.map(it => ({ productId: it.productId, quantity: it.quantity, unitPrice: it.unitPrice })),
-        }),
+      await orderService.createOrder({
+        customerName,
+        customerPhone,
+        items: items.map(it => ({ productId: it.productId, quantity: it.quantity })),
       });
-      if (!res.ok) throw new Error('Không thể tạo đơn hàng. Vui lòng thử lại.');
-      onSuccess(); onClose();
+      onSuccess(); 
+      onClose();
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Không thể tạo đơn hàng. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }

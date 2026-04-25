@@ -4,10 +4,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 import InventorySummaryCards from '@/components/inventory/InventorySummaryCards';
-import ProductTable, { Product } from '@/components/inventory/ProductTable';
+import ProductTable from '@/components/inventory/ProductTable';
 import { getStockStatus } from '@/components/inventory/InventoryStatusBadge';
-
-const API_BASE = 'http://localhost:5139/api';
+import { Product } from '@/types/product';
 
 const MOCK_PRODUCTS: Product[] = [
   { id: 'p1', name: 'Áo thun Polo Nam 1', sku: 'FASH-001', category: 'Thời trang Nam', salePrice: 125000, costPrice: 52000, stock: 51, lowStockThreshold: 5 },
@@ -19,6 +18,7 @@ const MOCK_PRODUCTS: Product[] = [
 ];
 
 import CreateProductModal from '@/components/inventory/CreateProductModal';
+import { productService } from '@/services/product.service';
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -30,11 +30,10 @@ export default function InventoryPage() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/products`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
+      const data = await productService.getProducts();
       setProducts(data);
-    } catch {
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
       setProducts(MOCK_PRODUCTS);
     } finally {
       setLoading(false);

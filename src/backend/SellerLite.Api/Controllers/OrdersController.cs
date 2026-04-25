@@ -9,7 +9,7 @@ namespace SellerLite.Api.Controllers;
 public class OrdersController : ApiControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<OrderDto>>> GetOrders()
+    public async Task<ActionResult<List<OrderSummaryDto>>> GetOrders()
     {
         return await Mediator.Send(new GetOrdersQuery());
     }

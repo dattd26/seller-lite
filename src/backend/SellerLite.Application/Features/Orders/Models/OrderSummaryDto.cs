@@ -1,10 +1,10 @@
 namespace SellerLite.Application.Features.Orders.Models;
 
-public record OrderDto(
+public record OrderSummaryDto(
     Guid Id, 
     string OrderNumber, 
     string Status, 
     decimal TotalPrice, 
     string CustomerName, 
-    DateTime CreatedAt,
-    List<OrderItemDto> Items);
+    DateTime CreatedAt);
+    

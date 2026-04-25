@@ -25,6 +25,7 @@ public static class DependencyInjection
             new Microsoft.Data.SqlClient.SqlConnection(connectionString));
 
         services.AddScoped<IDashboardQueryService, DashboardQueryService>();
+        services.AddScoped<IOrderQueryService, OrderQueryService>();
 
         return services;
     }

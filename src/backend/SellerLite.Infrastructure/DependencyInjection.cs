@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Infrastructure.Persistence;
+using SellerLite.Infrastructure.Persistence.Queries;
 
 namespace SellerLite.Infrastructure;
 
@@ -18,6 +19,12 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        
+        // Dapper Connection
+        services.AddScoped<System.Data.IDbConnection>(sp => 
+            new Microsoft.Data.SqlClient.SqlConnection(connectionString));
+
+        services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
         return services;
     }

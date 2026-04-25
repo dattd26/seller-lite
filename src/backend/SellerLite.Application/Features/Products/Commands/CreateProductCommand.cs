@@ -1,8 +1,11 @@
 using MediatR;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SellerLite.Application.Products.Commands.CreateProduct;
+namespace SellerLite.Application.Features.Products.Commands;
 
 public record CreateProductCommand(string Name, string SKU, decimal SalePrice, decimal CostPrice, int Stock) : IRequest<Guid>;
 

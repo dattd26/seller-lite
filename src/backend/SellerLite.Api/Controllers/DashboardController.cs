@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
+using SellerLite.Application.Features.Dashboard.Queries;
 
 namespace SellerLite.Api.Controllers;
 

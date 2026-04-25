@@ -2,8 +2,12 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities.Enums;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SellerLite.Application.Orders.Commands.UpdateOrderStatus;
+namespace SellerLite.Application.Features.Orders.Commands;
 
 public record UpdateOrderStatusCommand(Guid OrderId, OrderStatus Status) : IRequest;
 
@@ -23,7 +27,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
             .FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
         
         if (order == null)
-            throw new Exception("Order not found");
+            throw new KeyNotFoundException($"Order with ID {request.OrderId} not found.");
 
         var oldStatus = order.Status;
         var newStatus = request.Status;

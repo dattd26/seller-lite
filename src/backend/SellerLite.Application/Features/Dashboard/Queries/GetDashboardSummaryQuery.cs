@@ -1,7 +1,11 @@
 using MediatR;
 using SellerLite.Application.Common.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
+namespace SellerLite.Application.Features.Dashboard.Queries;
 
 public record DailyRevenueDto(string Date, decimal Revenue, decimal Profit);
 public record CategorySalesDto(string Category, decimal Revenue, int Count);

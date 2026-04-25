@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using SellerLite.Application.Products.Commands.CreateProduct;
-using SellerLite.Application.Products.Queries.GetProducts;
+using SellerLite.Application.Features.Products.Commands;
+using SellerLite.Application.Features.Products.Queries;
+using SellerLite.Application.Features.Products.Models;
 
 namespace SellerLite.Api.Controllers;
 

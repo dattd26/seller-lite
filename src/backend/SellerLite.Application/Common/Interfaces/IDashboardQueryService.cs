@@ -1,5 +1,4 @@
 using SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
-using System.Threading.Tasks;
 
 namespace SellerLite.Application.Common.Interfaces;
 

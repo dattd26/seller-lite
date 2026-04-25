@@ -1,9 +1,5 @@
 using MediatR;
 using SellerLite.Application.Common.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
 

@@ -2,11 +2,8 @@ using Dapper;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
 using SellerLite.Domain.Entities.Enums;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace SellerLite.Infrastructure.Persistence.Queries;
 

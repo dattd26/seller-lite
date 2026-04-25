@@ -2,8 +2,13 @@ using MediatR;
 using SellerLite.Application.Common.Interfaces;
 using SellerLite.Domain.Entities;
 using SellerLite.Domain.Entities.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SellerLite.Application.Orders.Commands.CreateOrder;
+namespace SellerLite.Application.Features.Orders.Commands;
 
 public record CreateOrderItemDto(Guid ProductId, int Quantity, decimal UnitPrice);
 

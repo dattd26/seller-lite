@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SellerLite.Application.Orders.Commands.UpdateOrderStatus;
-using SellerLite.Application.Orders.Queries.GetOrders;
+using SellerLite.Application.Features.Orders.Commands;
+using SellerLite.Application.Features.Orders.Queries;
+using SellerLite.Application.Features.Orders.Models;
 using SellerLite.Domain.Entities.Enums;
-using SellerLite.Application.Orders.Commands.CreateOrder;
 
 namespace SellerLite.Api.Controllers;
 
@@ -12,6 +12,13 @@ public class OrdersController : ApiControllerBase
     public async Task<ActionResult<List<OrderDto>>> GetOrders()
     {
         return await Mediator.Send(new GetOrdersQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OrderDto>> GetOrder(Guid id)
+    {
+        var order = await Mediator.Send(new GetOrderByIdQuery(id));
+        return Ok(order);
     }
 
     [HttpPut("{id}/status")]

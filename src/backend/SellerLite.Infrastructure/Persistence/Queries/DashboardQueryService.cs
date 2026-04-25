@@ -1,6 +1,6 @@
 using Dapper;
 using SellerLite.Application.Common.Interfaces;
-using SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
+using SellerLite.Application.Features.Dashboard.Queries;
 using SellerLite.Domain.Entities.Enums;
 using System.Data;
 

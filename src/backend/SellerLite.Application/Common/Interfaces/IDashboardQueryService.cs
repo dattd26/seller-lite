@@ -1,4 +1,4 @@
-using SellerLite.Application.Dashboard.Queries.GetDashboardSummary;
+using SellerLite.Application.Features.Dashboard.Queries;
 
 namespace SellerLite.Application.Common.Interfaces;
 

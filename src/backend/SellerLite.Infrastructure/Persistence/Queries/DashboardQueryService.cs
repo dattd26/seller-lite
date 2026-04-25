@@ -18,11 +18,11 @@ public class DashboardQueryService : IDashboardQueryService
 
     public async Task<DashboardSummaryDto> GetDashboardSummaryAsync(DateTime startDate)
     {
-        const int completedOrderStatus = (int)OrderStatus.Completed;
+        const int completedStatus = (int)OrderStatus.Completed;
 
         using var multi = await _dbConnection.QueryMultipleAsync(
             "GetDashboardSummary", 
-            new { completedOrderStatus, startDate }, 
+            new { completedStatus, startDate }, 
             commandType: CommandType.StoredProcedure);
 
         var summary = await multi.ReadFirstAsync();

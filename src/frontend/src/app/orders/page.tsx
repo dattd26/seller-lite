@@ -100,8 +100,8 @@ export default function OrdersPage() {
       };
       await orderService.updateStatus(id, statusMap[status]);
       setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
-    } catch (error) {
-      console.error('Failed to update order status:', error);
+    } catch (error: any) {
+      console.error('Failed to update order status:', error.message);
     }
   };
 

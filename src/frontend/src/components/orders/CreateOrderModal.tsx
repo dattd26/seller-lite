@@ -94,7 +94,8 @@ const CreateOrderModal: React.FC<Props> = ({ isOpen, onClose, onSuccess, product
       await orderService.createOrder({
         customerName,
         customerPhone,
-        items: items.map(it => ({ productId: it.productId, quantity: it.quantity })),
+        shippingFee: SHIPPING_FEE,
+        items: items.map(it => ({ productId: it.productId, quantity: it.quantity, unitPrice: it.unitPrice })),
       });
       onSuccess(); 
       onClose();

@@ -22,20 +22,25 @@ public class ResponseWrapperFilter : IAsyncResultFilter
             if (isSuccess)
             {
                 var response = ApiResponse<object>.Ok(objectResult.Value);
+                
+                // Chuyển 204 No Content thành 200 OK vì chúng ta đang trả về một body (ApiResponse wrapper)
+                // Một số client/browser sẽ bỏ qua body nếu status code là 204.
+                int? statusCode = objectResult.StatusCode == 204 ? 200 : objectResult.StatusCode;
+
                 context.Result = new ObjectResult(response)
                 {
-                    StatusCode = objectResult.StatusCode
+                    StatusCode = statusCode
                 };
             }
             else
             {
-                object errors = null;
+                object? errors = null;
                 string message = "Request failed";
                 
                 if (objectResult.Value is ValidationProblemDetails problemDetails)
                 {
                     errors = problemDetails.Errors;
-                    message = problemDetails.Title;
+                    message = problemDetails.Title ?? message;
                 }
 
                 var response = ApiResponse<object>.Fail(message, errors);
@@ -47,13 +52,16 @@ public class ResponseWrapperFilter : IAsyncResultFilter
         }
         else if (context.Result is EmptyResult || context.Result is StatusCodeResult)
         {
-            // Handle NoContent(), Ok() without body, etc.
-            int statusCode = (context.Result as StatusCodeResult)?.StatusCode ?? 200;
+            // Xử lý NoContent(), Ok() không có body, v.v.
+            var statusCodeResult = context.Result as StatusCodeResult;
+            int statusCode = statusCodeResult?.StatusCode ?? 200;
             var isSuccess = statusCode >= 200 && statusCode < 300;
             
             if (isSuccess)
             {
-                context.Result = new ObjectResult(ApiResponse<object>.Ok(null)) { StatusCode = statusCode };
+                // Chuyển 204 No Content thành 200 OK vì chúng ta đang trả về một body (ApiResponse wrapper)
+                int finalStatusCode = statusCode == 204 ? 200 : statusCode;
+                context.Result = new ObjectResult(ApiResponse<object>.Ok(null)) { StatusCode = finalStatusCode };
             }
             else
             {

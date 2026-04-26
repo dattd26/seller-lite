@@ -28,8 +28,10 @@ export interface OrderDetail extends Order {
 export interface CreateOrderRequest {
   customerName: string;
   customerPhone: string;
+  shippingFee: number;
   items: {
     productId: string;
     quantity: number;
+    unitPrice: number;
   }[];
 }
